@@ -92,6 +92,8 @@ public:
     double get_lanesection_end(const double lanesection_s0) const;
     double get_lanesection_length(const LaneSection& lanesection) const;
     double get_lanesection_length(const double lanesection_s0) const;
+    void add_closeoff_pt(const double s, const double t, Mesh3D &out_mesh) const;
+    void close_off_lane_mesh(const Lane& lane, Mesh3D& out_mesh, const std::set<double>& s_vals, const bool ccw) const;
 
     Vec3D get_xyz(const double s, const double t, const double h, Vec3D* e_s = nullptr, Vec3D* e_t = nullptr, Vec3D* e_h = nullptr) const;
     Vec3D get_surface_pt(double s, const double t, Vec3D* vn = nullptr) const;

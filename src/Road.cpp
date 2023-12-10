@@ -111,6 +111,51 @@ double Road::get_lanesection_length(const double lanesection_s0) const
     return s_end - lanesection_s0;
 }
 
+void Road::add_closeoff_pt(const double s, const double t, Mesh3D& out_mesh) const
+{
+    Vec3D vn_closeoff{0, 0, 0};
+    out_mesh.vertices.push_back(this->get_xyz(s, t, 0.0, nullptr, nullptr, &vn_closeoff));
+    out_mesh.normals.push_back(vn_closeoff);
+    out_mesh.st_coordinates.push_back({s, t});
+}
+
+void Road::close_off_lane_mesh(const Lane& lane, Mesh3D& out_mesh, const std::set<double>& s_vals, const bool ccw) const
+{
+    if (s_vals.empty())
+        return;
+
+    auto lane_end_iter = s_vals.end();
+    lane_end_iter--;
+    this->add_closeoff_pt(*s_vals.begin(), lane.inner_border.get(*s_vals.begin()), out_mesh);
+    this->add_closeoff_pt(*s_vals.begin(), lane.outer_border.get(*s_vals.begin()), out_mesh);
+    this->add_closeoff_pt(*lane_end_iter, lane.inner_border.get(*lane_end_iter), out_mesh);
+    this->add_closeoff_pt(*lane_end_iter, lane.outer_border.get(*lane_end_iter), out_mesh);
+    const size_t num_pts = out_mesh.vertices.size();
+
+    if (ccw)
+    {
+        out_mesh.indices.insert(out_mesh.indices.end(), {(uint32_t)(num_pts - 3), 1, 2, (uint32_t)(num_pts - 3), (uint32_t)(num_pts - 4), 1});
+        out_mesh.indices.insert(out_mesh.indices.end(),
+                                {(uint32_t)(num_pts - 2),
+                                 (uint32_t)(num_pts - 5),
+                                 (uint32_t)(num_pts - 6),
+                                 (uint32_t)(num_pts - 2),
+                                 (uint32_t)(num_pts - 1),
+                                 (uint32_t)(num_pts - 5)});
+    }
+    else
+    {
+        out_mesh.indices.insert(out_mesh.indices.end(), {(uint32_t)(num_pts - 4), 2, 1, (uint32_t)(num_pts - 4), (uint32_t)(num_pts - 3), 2});
+        out_mesh.indices.insert(out_mesh.indices.end(),
+                                {(uint32_t)(num_pts - 1),
+                                 (uint32_t)(num_pts - 6),
+                                 (uint32_t)(num_pts - 5),
+                                 (uint32_t)(num_pts - 1),
+                                 (uint32_t)(num_pts - 2),
+                                 (uint32_t)(num_pts - 6)});
+    }
+}
+
 Vec3D Road::get_xyz(const double s, const double t, const double h, Vec3D* _e_s, Vec3D* _e_t, Vec3D* _e_h) const
 {
     const Vec3D  s_vec = this->ref_line.get_grad(s);
@@ -259,10 +304,11 @@ Mesh3D Road::get_lane_mesh(const Lane& lane, const double s_start, const double 
     s_vals.insert(s_vals_lane_height.begin(), s_vals_lane_height.end());
 
     const double lanesection_s0 = this->get_lanesection_s0(s_start);
-    if (!std::isnan(lanesection_s0)) {
+    if (!std::isnan(lanesection_s0))
+    {
         const LaneSection& lanesection = this->s_to_lanesection.at(lanesection_s0);
         const Lane&        inner_lane = lanesection.id_to_lane.at(lanesection.get_lane_id(s_start, lane.inner_border.get(s_start)));
-        std::set<double> s_vals_inner_lane_height = get_map_keys(inner_lane.s_to_height_offset);
+        std::set<double>   s_vals_inner_lane_height = get_map_keys(inner_lane.s_to_height_offset);
         s_vals.insert(s_vals_inner_lane_height.begin(), s_vals_inner_lane_height.end());
     }
 
@@ -309,6 +355,8 @@ Mesh3D Road::get_lane_mesh(const Lane& lane, const double s_start, const double 
             indicies_patch = {idx - 4, idx, idx - 1, idx - 4, idx - 3, idx, idx - 5, idx - 1, idx - 2, idx - 5, idx - 4, idx - 1};
         out_mesh.indices.insert(out_mesh.indices.end(), indicies_patch.begin(), indicies_patch.end());
     }
+
+    this->close_off_lane_mesh(lane, out_mesh, s_vals, ccw);
 
     if (outline_indices)
     {
