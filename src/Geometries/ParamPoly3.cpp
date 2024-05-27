@@ -69,6 +69,19 @@ Vec2D ParamPoly3::get_grad(double s) const
     return {{dx, dy}};
 }
 
+double ParamPoly3::get_heading(double s) const
+{
+    const double p = this->cubic_bezier.get_t(s - s0);
+    const Vec2D  dxy = this->cubic_bezier.get_grad(p);
+
+    const double h1 = std::cos(hdg0);
+    const double h2 = std::sin(hdg0);
+    const double dx = h1 * dxy[0] - h2 * dxy[1];
+    const double dy = h2 * dxy[0] + h1 * dxy[1];
+
+    return std::atan2(dy, dx);
+}
+
 std::set<double> ParamPoly3::approximate_linear(double eps) const
 {
     std::set<double> p_vals = this->cubic_bezier.approximate_linear(eps);

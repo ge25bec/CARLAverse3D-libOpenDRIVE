@@ -17,6 +17,8 @@ struct Line : public RoadGeometry
     Vec2D get_xy(double s) const override;
     Vec2D get_grad(double s) const override;
 
+    double get_heading(double s) const override;
+
     std::set<double> approximate_linear(double eps) const override;
 };
 
