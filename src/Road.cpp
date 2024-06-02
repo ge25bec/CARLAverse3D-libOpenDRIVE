@@ -134,10 +134,10 @@ void Road::close_off_lane_mesh(const Lane& lane, Mesh3D& out_mesh, const std::se
 
     if (ccw)
     {
-        //close off mesh at lane start
+        // close off mesh at lane start
         out_mesh.indices.insert(out_mesh.indices.end(), {(uint32_t)(num_pts - 3), 1, 2, (uint32_t)(num_pts - 3), (uint32_t)(num_pts - 4), 1});
-        
-        //close off mesh at lane end
+
+        // close off mesh at lane end
         out_mesh.indices.insert(out_mesh.indices.end(),
                                 {(uint32_t)(num_pts - 2),
                                  (uint32_t)(num_pts - 5),
@@ -148,10 +148,10 @@ void Road::close_off_lane_mesh(const Lane& lane, Mesh3D& out_mesh, const std::se
     }
     else
     {
-        //close off mesh at lane start
+        // close off mesh at lane start
         out_mesh.indices.insert(out_mesh.indices.end(), {(uint32_t)(num_pts - 4), 2, 1, (uint32_t)(num_pts - 4), (uint32_t)(num_pts - 3), 2});
-        
-        //close off mesh at lane end
+
+        // close off mesh at lane end
         out_mesh.indices.insert(out_mesh.indices.end(),
                                 {(uint32_t)(num_pts - 1),
                                  (uint32_t)(num_pts - 6),
@@ -351,31 +351,53 @@ Mesh3D Road::get_lane_mesh(const Lane& lane, const double s_start, const double 
         this->add_closeoff_pt(s, t_outer_brdr, out_mesh);
     }
 
-    const std::size_t num_pts = out_mesh.vertices.size();
-    const bool        ccw = lane.id > 0;
+    const std::size_t       num_pts = out_mesh.vertices.size();
+    const bool              ccw = lane.id > 0;
     const std::vector<Lane> lanes = this->get_lanesection(lanesection_s0).get_lanes();
-    
-    if (lanes.begin()->id == lane.id || lanes.at(lanes.size() - 1).id == lane.id) //is outermost lane
+
+    if (lanes.begin()->id == lane.id || lanes.at(lanes.size() - 1).id == lane.id) // is outermost lane
         for (std::size_t idx = 7; idx < num_pts; idx += 4)
         {
             std::array<size_t, 18> indicies_patch;
             if (ccw)
-                indicies_patch = {/* lane surface */ idx - 6, idx - 2, idx - 1,
-                              /* lane surface */ idx - 6, idx - 1, idx - 5,
-                              /* inner lane side */ idx - 7, idx - 3, idx - 2,
-                              /* inner lane side */ idx - 7, idx - 2, idx - 6,
-                              /* outer lane side */ idx - 5, idx - 1, idx,
-                              /* outer lane side */ idx - 5, idx, idx - 4
-                              };
+                indicies_patch = {/* lane surface */ idx - 6,
+                                  idx - 2,
+                                  idx - 1,
+                                  /* lane surface */ idx - 6,
+                                  idx - 1,
+                                  idx - 5,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 3,
+                                  idx - 2,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 2,
+                                  idx - 6,
+                                  /* outer lane side */ idx - 5,
+                                  idx - 1,
+                                  idx,
+                                  /* outer lane side */ idx - 5,
+                                  idx,
+                                  idx - 4};
             else
-                indicies_patch = {/* lane surface */ idx - 6, idx - 1, idx - 2,
-                              /* lane surface */ idx - 6, idx - 5, idx - 1,
-                              /* inner lane side */ idx - 7, idx - 2, idx - 3,
-                              /* inner lane side */ idx - 7, idx - 6, idx - 2,
-                              /* outer lane side */ idx - 5, idx, idx - 1,
-                              /* outer lane side */ idx - 5, idx - 4, idx
-                              };
-        
+                indicies_patch = {/* lane surface */ idx - 6,
+                                  idx - 1,
+                                  idx - 2,
+                                  /* lane surface */ idx - 6,
+                                  idx - 5,
+                                  idx - 1,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 2,
+                                  idx - 3,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 6,
+                                  idx - 2,
+                                  /* outer lane side */ idx - 5,
+                                  idx,
+                                  idx - 1,
+                                  /* outer lane side */ idx - 5,
+                                  idx - 4,
+                                  idx};
+
             out_mesh.indices.insert(out_mesh.indices.end(), indicies_patch.begin(), indicies_patch.end());
         }
     else
@@ -383,18 +405,34 @@ Mesh3D Road::get_lane_mesh(const Lane& lane, const double s_start, const double 
         {
             std::array<size_t, 12> indicies_patch;
             if (ccw)
-                indicies_patch = {/* lane surface */ idx - 6, idx - 2, idx - 1,
-                              /* lane surface */ idx - 6, idx - 1, idx - 5,
-                              /* inner lane side */ idx - 7, idx - 3, idx - 2,
-                              /* inner lane side */ idx - 7, idx - 2, idx - 6};
+                indicies_patch = {/* lane surface */ idx - 6,
+                                  idx - 2,
+                                  idx - 1,
+                                  /* lane surface */ idx - 6,
+                                  idx - 1,
+                                  idx - 5,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 3,
+                                  idx - 2,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 2,
+                                  idx - 6};
             else
-                indicies_patch = {/* lane surface */ idx - 6, idx - 1, idx - 2, 
-                              /* lane surface */ idx - 6, idx - 5, idx - 1,
-                              /* inner lane side */ idx - 7, idx - 2, idx - 3,
-                              /* inner lane side */ idx - 7, idx - 6, idx - 2};
-        
+                indicies_patch = {/* lane surface */ idx - 6,
+                                  idx - 1,
+                                  idx - 2,
+                                  /* lane surface */ idx - 6,
+                                  idx - 5,
+                                  idx - 1,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 2,
+                                  idx - 3,
+                                  /* inner lane side */ idx - 7,
+                                  idx - 6,
+                                  idx - 2};
+
             out_mesh.indices.insert(out_mesh.indices.end(), indicies_patch.begin(), indicies_patch.end());
-        }   
+        }
 
     this->close_off_lane_mesh(lane, out_mesh, s_vals, ccw);
 
@@ -408,6 +446,34 @@ Mesh3D Road::get_lane_mesh(const Lane& lane, const double s_start, const double 
 
 Mesh3D Road::get_lane_mesh(const Lane& lane, const double eps, std::vector<uint32_t>* outline_indices) const
 {
+    std::string type;
+
+    for (char c : lane.type)
+        type += std::tolower(c);
+
+    if (type == "driving" || type == "entry" || type == "exit" || type == "onramp" || type == "offramp" || type == "connectingramp" ||
+        type == "sliplane")
+    {
+        const double s_end = this->get_lanesection_end(lane.key.lanesection_s0);
+        return this->get_lane_mesh(lane, lane.key.lanesection_s0, s_end, eps, outline_indices);    
+    }
+
+    return Mesh3D();
+}
+
+Mesh3D Road::get_sidewalk_mesh(const Lane& lane, const double eps, std::vector<uint32_t>* outline_indices) const
+{
+    std::string type;
+
+    for (char c : lane.type)
+        type += std::tolower(c);
+
+    if (type == "driving" || type == "entry" || type == "exit" || type == "onramp" || type == "offramp" || type == "connectingramp" ||
+        type == "sliplane")
+    {
+        return Mesh3D();
+    }
+
     const double s_end = this->get_lanesection_end(lane.key.lanesection_s0);
     return this->get_lane_mesh(lane, lane.key.lanesection_s0, s_end, eps, outline_indices);
 }
