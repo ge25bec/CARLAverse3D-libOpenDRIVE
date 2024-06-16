@@ -41,13 +41,6 @@ Vec2D Spiral::get_grad(double s) const
     return {{dx, dy}};
 }
 
-double Spiral::get_heading(double s) const
-{
-    double xs_spiral, ys_spiral, as_spiral;
-    odrSpiral(s - s0 + s0_spiral, c_dot, &xs_spiral, &ys_spiral, &as_spiral);
-    return as_spiral + hdg0 - a0_spiral;
-}
-
 std::set<double> Spiral::approximate_linear(double eps) const
 {
     // TODO: properly implement

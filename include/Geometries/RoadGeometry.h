@@ -26,7 +26,7 @@ struct RoadGeometry : public XmlNode
     virtual Vec2D get_xy(double s) const = 0;
     virtual Vec2D get_grad(double s) const = 0;
 
-    virtual double get_heading(double s) const = 0;
+    virtual double get_heading(double s) const;
 
     virtual std::set<double> approximate_linear(double eps) const = 0;
 

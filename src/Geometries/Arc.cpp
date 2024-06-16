@@ -28,11 +28,6 @@ Vec2D Arc::get_grad(double s) const
     return {{dx, dy}};
 }
 
-double Arc::get_heading(double s) const
-{
-    return hdg0 - curvature * (s - s0);
-}
-
 std::set<double> Arc::approximate_linear(double eps) const
 {
     // TODO: properly implement

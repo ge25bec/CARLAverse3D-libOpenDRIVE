@@ -8,4 +8,10 @@ RoadGeometry::RoadGeometry(double s0, double x0, double y0, double hdg0, double 
 {
 }
 
+double RoadGeometry::get_heading(double s) const
+{
+    const Vec2D grad = get_grad(s);
+    return std::atan2(grad[1], grad[0]);
+}
+
 } // namespace odr
