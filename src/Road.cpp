@@ -469,7 +469,23 @@ Mesh3D Road::get_sidewalk_mesh(const Lane& lane, const double eps, std::vector<u
         type += std::tolower(c);
 
     if (type == "driving" || type == "entry" || type == "exit" || type == "onramp" || type == "offramp" || type == "connectingramp" ||
-        type == "sliplane")
+        type == "sliplane" || type == "curb")
+    {
+        return Mesh3D();
+    }
+
+    const double s_end = this->get_lanesection_end(lane.key.lanesection_s0);
+    return this->get_lane_mesh(lane, lane.key.lanesection_s0, s_end, eps, outline_indices);
+}
+
+Mesh3D Road::get_curb_mesh(const Lane& lane, const double eps, std::vector<uint32_t>* outline_indices) const
+{
+    std::string type;
+
+    for (char c : lane.type)
+        type += std::tolower(c);
+
+    if (type != "curb")
     {
         return Mesh3D();
     }
