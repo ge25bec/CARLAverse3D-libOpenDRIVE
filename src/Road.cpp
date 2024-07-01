@@ -139,12 +139,12 @@ void Road::close_off_lane_mesh(const Lane& lane, Mesh3D& out_mesh, const std::se
 
         // close off mesh at lane end
         out_mesh.indices.insert(out_mesh.indices.end(),
-                                {(uint32_t)(num_pts - 2),
-                                 (uint32_t)(num_pts - 5),
+                                {(uint32_t)(num_pts - 7),
+                                 (uint32_t)(num_pts - 2),
+                                 (uint32_t)(num_pts - 6),
                                  (uint32_t)(num_pts - 6),
                                  (uint32_t)(num_pts - 2),
-                                 (uint32_t)(num_pts - 1),
-                                 (uint32_t)(num_pts - 5)});
+                                 (uint32_t)(num_pts - 1)});
     }
     else
     {
@@ -154,11 +154,11 @@ void Road::close_off_lane_mesh(const Lane& lane, Mesh3D& out_mesh, const std::se
         // close off mesh at lane end
         out_mesh.indices.insert(out_mesh.indices.end(),
                                 {(uint32_t)(num_pts - 1),
-                                 (uint32_t)(num_pts - 6),
-                                 (uint32_t)(num_pts - 5),
-                                 (uint32_t)(num_pts - 1),
                                  (uint32_t)(num_pts - 2),
-                                 (uint32_t)(num_pts - 6)});
+                                 (uint32_t)(num_pts - 6),
+                                 (uint32_t)(num_pts - 6),
+                                 (uint32_t)(num_pts - 2),
+                                 (uint32_t)(num_pts - 7)});
     }
 }
 
@@ -469,7 +469,7 @@ Mesh3D Road::get_sidewalk_mesh(const Lane& lane, const double eps, std::vector<u
         type += std::tolower(c);
 
     if (type == "driving" || type == "entry" || type == "exit" || type == "onramp" || type == "offramp" || type == "connectingramp" ||
-        type == "sliplane" || type == "curb")
+        type == "sliplane" /* || type == "curb" */)
     {
         return Mesh3D();
     }
